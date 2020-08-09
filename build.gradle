@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'io.dropwizard:dropwizard-core:2.0.12'
+    implementation 'io.dropwizard:dropwizard-validation:2.0.12'
+    testImplementation 'junit:junit:4.13'
+}
+
+mainClassName = "com.nsuws.NsuwsAPI"
+jar {
+    manifest {
+        attributes 'Main-Class': "$mainClassName"
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task runApp(type: JavaExec) {
+    classpath = files('build/libs/crypto-api.jar')
+    classpath += sourceSets.main.runtimeClasspath
+    main = "$mainClassName"
+    args('server','config.yaml')
+}
+
