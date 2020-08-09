@@ -22,17 +22,25 @@ public class StatisticsService {
         BigDecimal new_sum = cur_sum.add(number);
         BigDecimal new_avg = (new_sum.divide(new_count,10, RoundingMode.HALF_DOWN)).round(precision);
         BigDecimal new_std = calculateStdDeviation(number, cur_std, cur_avg, new_count, new_avg);
-
-        if (cur_count.compareTo(BigDecimal.valueOf(0)) == 1) {
-            new_std = calculateStdDeviation(number, cur_std, cur_avg, new_count, new_avg);
-        }
-
-        Statistics statistics = new Statistics(new_avg.stripTrailingZeros().toPlainString(),new_std.stripTrailingZeros().toPlainString());
+        //store the new updated count/sum/avg/std deviation in the memory
         StatisticsInfoStore.getInstance().add(new_count,new_sum,new_avg,new_std);
+        //build value object to return
+        Statistics statistics = new Statistics(new_avg.stripTrailingZeros().toPlainString(),new_std.stripTrailingZeros().toPlainString());
         System.out.println(statistics);
         return statistics;
     }
 
+    /**
+     * find standared deviation from newnumber/stddeviation so far/ average so far/ new total numbers / new average
+     * formula is
+     *
+     * @param number
+     * @param cur_std
+     * @param cur_avg
+     * @param new_count
+     * @param new_avg
+     * @return
+     */
     private BigDecimal calculateStdDeviation(BigDecimal number, BigDecimal cur_std, BigDecimal cur_avg, BigDecimal new_count, BigDecimal new_avg) {
         BigDecimal new_std = BigDecimal.valueOf(0);
         if (new_count.compareTo(BigDecimal.valueOf(0)) == 1) {
