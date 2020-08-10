@@ -15,11 +15,11 @@ Build and Run
 > The below command will build the code generate a jar file and run that jar file. 
 > The server will we available in http://localhost:8080/
 
-> linux based system
+> Build and run the server in linux based system
 ```
 ./gradlew build runApp
 ```
-> windows
+> Build and run the server in windows
 ``` 
 gradlew build runApp
 ```
