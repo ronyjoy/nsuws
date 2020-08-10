@@ -2,13 +2,15 @@ package com.nsuws.core.crypto;
 
 import com.nsuws.NsuwsAPIConfig;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -16,6 +18,7 @@ import java.util.Base64;
  * Doing AES GCM Encryption
  */
 public class EncryptorAesGcm {
+
     //AES GCM is faster than AES CBC
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
@@ -30,13 +33,13 @@ public class EncryptorAesGcm {
         this.secret = new SecretKeySpec(keyBytes, "AES");
     }
 
-    public String encrypt(String plainText) throws Exception{
+    public String encrypt(String plainText) throws CryptoException{
         byte[] cipher = encrypt(plainText.getBytes(UTF_8));
         byte[] encodedCipher = Base64.getEncoder().encode(cipher);
         return  new String(encodedCipher, StandardCharsets.UTF_8);
     }
 
-    public  byte[] encrypt(byte[] plainText) throws Exception {
+    public  byte[] encrypt(byte[] plainText) throws CryptoException {
         byte[] iv = getRandomNonce(IV_LENGTH_BYTE);
         byte[] cipherText = encrypt(plainText, iv);
         byte[] cipherTextWithIv = ByteBuffer.allocate(iv.length + cipherText.length)
@@ -46,34 +49,48 @@ public class EncryptorAesGcm {
         return cipherTextWithIv;
     }
 
-    private byte[] encrypt(byte[] plainText, byte[] iv) throws Exception {
-        Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
-        cipher.init(Cipher.ENCRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
-        byte[] encryptedText = cipher.doFinal(plainText);
+    private byte[] encrypt(byte[] plainText, byte[] iv) throws CryptoException {
+        Cipher cipher = null;
+        byte[] encryptedText = null;
+        try {
+            cipher = Cipher.getInstance(ENCRYPT_ALGO);
+            cipher.init(Cipher.ENCRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
+            encryptedText = cipher.doFinal(plainText);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+                InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoException(e);
+        }
         return encryptedText;
     }
 
-    public String decrypt(String cipherText) throws Exception{
+    public String decrypt(String cipherText) throws CryptoException{
         byte[] decodedCipherText = Base64.getDecoder().decode(cipherText);
         byte[] plainText = decrypt(decodedCipherText);
         return  new String(plainText, StandardCharsets.UTF_8);
     }
 
-    public byte[] decrypt(byte[] cipherTextPrefixedIv) throws Exception {
+    public byte[] decrypt(byte[] cipherTextPrefixedIv) throws CryptoException {
         ByteBuffer bb = ByteBuffer.wrap(cipherTextPrefixedIv);
         byte[] iv = new byte[IV_LENGTH_BYTE];
         bb.get(iv);
-        //bb.get(iv, 0, iv.length);
         byte[] cipherText = new byte[bb.remaining()];
         bb.get(cipherText);
         return decrypt(cipherText, iv);
     }
 
 
-    private  byte[] decrypt(byte[] cText, byte[] iv) throws Exception {
-        Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
-        cipher.init(Cipher.DECRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
-        return cipher.doFinal(cText);
+    private  byte[] decrypt(byte[] cText, byte[] iv) throws CryptoException {
+        Cipher cipher = null;
+        byte[] plainTxt = null;
+        try {
+            cipher = Cipher.getInstance(ENCRYPT_ALGO);
+            cipher.init(Cipher.DECRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
+            plainTxt = cipher.doFinal(cText);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+                InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return plainTxt;
     }
 
 
