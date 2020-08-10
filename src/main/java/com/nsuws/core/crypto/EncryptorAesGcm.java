@@ -1,5 +1,7 @@
 package com.nsuws.core.crypto;
 
+import com.nsuws.NsuwsAPIConfig;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
@@ -11,28 +13,21 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 /**
- * AES-GCM inputs - 12 bytes IV, need the same IV and secret keys for encryption and decryption.
- * <p>
- * The output consist of iv, encrypted content, and auth tag in the following format:
- * output = byte[] {i i i c c c c c c ...}
- * <p>
- * i = IV bytes
- * c = content bytes (encrypted content, auth tag)
+ * Doing AES GCM Encryption
  */
 public class EncryptorAesGcm {
-
+    //AES GCM is faster than AES CBC
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
     private static final int AES_KEY_BIT = 256;
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
-
-    private static final byte[] key = "UkXp2s5v8y/A?D(G+KbPeShVmYq3t6w9".getBytes(StandardCharsets.UTF_8);
     private SecretKey secret;
 
-    public EncryptorAesGcm() {
-        if (key.length != 32) throw new IllegalArgumentException();
-        this.secret = new SecretKeySpec(key, "AES");
+    public EncryptorAesGcm(String key) {
+        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length != 32) throw new IllegalArgumentException();
+        this.secret = new SecretKeySpec(keyBytes, "AES");
     }
 
     public String encrypt(String plainText) throws Exception{

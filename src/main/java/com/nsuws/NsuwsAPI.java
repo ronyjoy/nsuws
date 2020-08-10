@@ -1,6 +1,5 @@
 package com.nsuws;
 
-import com.nsuws.resources.CryptoAPI;
 import com.nsuws.resources.StatisticsAPI;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
@@ -10,6 +9,10 @@ import io.dropwizard.setup.Environment;
 public class NsuwsAPI extends Application<NsuwsAPIConfig> {
     public static void main(String[] args) throws Exception {
         new NsuwsAPI().run(args);
+    }
+
+    @Override
+    protected void bootstrapLogging() {
     }
 
     @Override
@@ -26,8 +29,7 @@ public class NsuwsAPI extends Application<NsuwsAPIConfig> {
     @Override
     public void run(NsuwsAPIConfig configuration,
                     Environment environment) {
-        environment.jersey().register(new StatisticsAPI());
-        environment.jersey().register(new CryptoAPI());
+        environment.jersey().register(new StatisticsAPI(configuration.getEncryptionKey()));
     }
 
 

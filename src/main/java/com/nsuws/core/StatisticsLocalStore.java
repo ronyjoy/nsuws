@@ -1,17 +1,20 @@
 package com.nsuws.core;
 
+import com.nsuws.core.dto.Statistics;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class StatisticsInfoStore implements Serializable {
+public class StatisticsLocalStore implements StatisticsStore, Serializable {
     private static final long serialVersionUID = 654216542545884455L;
-    private static final StatisticsInfoStore singleton = new StatisticsInfoStore();
-    private volatile BigDecimal count = new BigDecimal(0);
-    private volatile BigDecimal sum = new BigDecimal(0);
-    private volatile BigDecimal avg = new BigDecimal(0);
-    private volatile BigDecimal std = new BigDecimal(0);
-    private StatisticsInfoStore() {
-        if (StatisticsInfoStore.singleton != null) {
+    private static final StatisticsLocalStore singleton = new StatisticsLocalStore();
+    private volatile BigDecimal count = BigDecimal.ZERO;
+    private volatile BigDecimal sum = BigDecimal.ZERO;
+    private volatile BigDecimal avg = BigDecimal.ZERO;
+    private volatile BigDecimal std = BigDecimal.ZERO;
+
+    private StatisticsLocalStore() {
+        if (StatisticsLocalStore.singleton != null) {
             throw new InstantiationError("Creating of this object is not allowed.");
         }
     }
@@ -38,7 +41,7 @@ public class StatisticsInfoStore implements Serializable {
         return std;
     }
 
-    public static StatisticsInfoStore getInstance() {
+    public static StatisticsLocalStore getInstance() {
         return singleton;
     }
 
@@ -53,4 +56,16 @@ public class StatisticsInfoStore implements Serializable {
         return singleton;
     }
 
+    @Override
+    public void add(Statistics data) {
+        this.count = data.getCount();
+        this.sum = data.getSum();
+        this.avg = data.getAvg();
+        this.std = data.getStd();
+    }
+
+    @Override
+    public Statistics get() {
+        return new Statistics(this.avg,this.std,this.count,this.sum);
+    }
 }

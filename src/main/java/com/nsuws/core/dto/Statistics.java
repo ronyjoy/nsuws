@@ -2,36 +2,56 @@ package com.nsuws.core.dto;
 
 import com.google.common.base.MoreObjects;
 
-public class Statistics {
-    private String avg;
-    private String std;
+import java.math.BigDecimal;
 
-    public Statistics(String avg, String std) {
+/**
+ * Value object to transfer Statistics details
+ */
+public final class Statistics {
+
+    private BigDecimal avg;
+    private BigDecimal std;
+    private BigDecimal count;
+    private BigDecimal sum;
+
+    /**
+     * Constructor
+     * @param avg
+     * @param std
+     * @param count
+     * @param sum
+     */
+    public Statistics(BigDecimal avg, BigDecimal std, BigDecimal count, BigDecimal sum) {
         this.avg = avg;
         this.std = std;
+        this.count = count;
+        this.sum = sum;
     }
 
-    public String getAvg() {
+    public BigDecimal getAvg() {
         return avg;
     }
 
-    public void setAvg(String avg) {
-        this.avg = avg;
-    }
-
-    public String getStd() {
+    public BigDecimal getStd() {
         return std;
     }
 
-    public void setStd(String std) {
-        this.std = std;
+    public BigDecimal getCount() {
+        return count;
     }
+
+    public BigDecimal getSum() {
+        return sum;
+    }
+
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("avg", avg)
                 .add("std", std)
+                .add("count", count)
+                .add("sum", sum)
                 .toString();
     }
 }

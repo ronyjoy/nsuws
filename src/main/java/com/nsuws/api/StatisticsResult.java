@@ -2,14 +2,15 @@ package com.nsuws.api;
 
 import com.google.common.base.MoreObjects;
 
-public class Result {
+public class StatisticsResult {
+
     private String avg;
     private String std;
 
-    public Result() {
+    public StatisticsResult() {
     }
 
-    public Result(String avg, String std) {
+    public StatisticsResult(String avg, String std) {
         this.avg = avg;
         this.std = std;
     }

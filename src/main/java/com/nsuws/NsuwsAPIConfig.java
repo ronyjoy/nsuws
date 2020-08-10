@@ -8,14 +8,14 @@ import javax.validation.constraints.NotNull;
 
 public class NsuwsAPIConfig extends Configuration {
     @NotNull
-    private final String key;
+    private final String encryptionKey;
 
     @JsonCreator
-    public NsuwsAPIConfig(@JsonProperty("key") String key) {
-        this.key = key;
+    public NsuwsAPIConfig(@JsonProperty("encryptionKey") String encryptionKey) {
+        this.encryptionKey = encryptionKey;
     }
 
-    public String getDefaultSize() {
-        return key;
+    public String getEncryptionKey() {
+        return encryptionKey;
     }
 }
