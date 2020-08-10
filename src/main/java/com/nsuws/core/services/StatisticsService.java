@@ -34,7 +34,6 @@ public class StatisticsService {
         //store the new updated Statistics in the Store
         Statistics nStat = new Statistics(new_avg,new_std,new_count,new_sum);
         StatisticsLocalStore.getInstance().add(nStat);
-        System.out.println(nStat);
         return nStat;
     }
 

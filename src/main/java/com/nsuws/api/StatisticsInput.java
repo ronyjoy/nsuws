@@ -4,6 +4,9 @@ import com.google.common.base.MoreObjects;
 
 import java.math.BigDecimal;
 
+/**
+ * Statistics Input Object
+ */
 public class StatisticsInput {
 
     private BigDecimal number;

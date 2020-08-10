@@ -27,19 +27,30 @@ public class EncryptorAesGcm {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private SecretKey secret;
 
+    /**
+     * Construct the class with key, note that the key is stored in the config.yaml file for now. It should ideally come from KMS system
+     *
+     * @param key
+     */
     public EncryptorAesGcm(String key) {
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
         if (keyBytes.length != 32) throw new IllegalArgumentException();
         this.secret = new SecretKeySpec(keyBytes, "AES");
     }
 
-    public String encrypt(String plainText) throws CryptoException{
+    /**
+     * Encrypt a plain text using AES GCM algorithm
+     * @param plainText
+     * @return
+     * @throws CryptoException
+     */
+    public String encrypt(String plainText) throws CryptoException {
         byte[] cipher = encrypt(plainText.getBytes(UTF_8));
         byte[] encodedCipher = Base64.getEncoder().encode(cipher);
-        return  new String(encodedCipher, StandardCharsets.UTF_8);
+        return new String(encodedCipher, StandardCharsets.UTF_8);
     }
 
-    public  byte[] encrypt(byte[] plainText) throws CryptoException {
+    private byte[] encrypt(byte[] plainText) throws CryptoException {
         byte[] iv = getRandomNonce(IV_LENGTH_BYTE);
         byte[] cipherText = encrypt(plainText, iv);
         byte[] cipherTextWithIv = ByteBuffer.allocate(iv.length + cipherText.length)
@@ -63,13 +74,19 @@ public class EncryptorAesGcm {
         return encryptedText;
     }
 
-    public String decrypt(String cipherText) throws CryptoException{
+    /**
+     * Decrypt a cipher text by using AES GCM algorithm
+     * @param cipherText
+     * @return
+     * @throws CryptoException
+     */
+    public String decrypt(String cipherText) throws CryptoException {
         byte[] decodedCipherText = Base64.getDecoder().decode(cipherText);
         byte[] plainText = decrypt(decodedCipherText);
-        return  new String(plainText, StandardCharsets.UTF_8);
+        return new String(plainText, StandardCharsets.UTF_8);
     }
 
-    public byte[] decrypt(byte[] cipherTextPrefixedIv) throws CryptoException {
+    private byte[] decrypt(byte[] cipherTextPrefixedIv) throws CryptoException {
         ByteBuffer bb = ByteBuffer.wrap(cipherTextPrefixedIv);
         byte[] iv = new byte[IV_LENGTH_BYTE];
         bb.get(iv);
@@ -79,7 +96,7 @@ public class EncryptorAesGcm {
     }
 
 
-    private  byte[] decrypt(byte[] cText, byte[] iv) throws CryptoException {
+    private byte[] decrypt(byte[] cText, byte[] iv) throws CryptoException {
         Cipher cipher = null;
         byte[] plainTxt = null;
         try {
@@ -93,8 +110,12 @@ public class EncryptorAesGcm {
         return plainTxt;
     }
 
-
-    public static byte[] getRandomNonce(int numBytes) {
+    /**
+     * Generate a nonce (IV)
+     * @param numBytes
+     * @return
+     */
+    private static byte[] getRandomNonce(int numBytes) {
         byte[] nonce = new byte[numBytes];
         new SecureRandom().nextBytes(nonce);
         return nonce;

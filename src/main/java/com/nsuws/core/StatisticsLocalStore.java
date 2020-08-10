@@ -5,7 +5,11 @@ import com.nsuws.core.dto.Statistics;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+/**
+ * Local store implementation of Statistics Store, It is singleton make statistics values available globally
+ */
 public class StatisticsLocalStore implements StatisticsStore, Serializable {
+
     private static final long serialVersionUID = 654216542545884455L;
     private static final StatisticsLocalStore singleton = new StatisticsLocalStore();
     private volatile BigDecimal count = BigDecimal.ZERO;
@@ -17,28 +21,6 @@ public class StatisticsLocalStore implements StatisticsStore, Serializable {
         if (StatisticsLocalStore.singleton != null) {
             throw new InstantiationError("Creating of this object is not allowed.");
         }
-    }
-    public void add(BigDecimal count, BigDecimal sum,BigDecimal avg,BigDecimal std) {
-        this.count = count;
-        this.sum = sum;
-        this.avg = avg;
-        this.std = std;
-    }
-
-    public BigDecimal getCount() {
-        return count;
-    }
-
-    public BigDecimal getAvg() {
-        return avg;
-    }
-
-    public BigDecimal getSum() {
-        return sum;
-    }
-
-    public BigDecimal getStd() {
-        return std;
     }
 
     public static StatisticsLocalStore getInstance() {

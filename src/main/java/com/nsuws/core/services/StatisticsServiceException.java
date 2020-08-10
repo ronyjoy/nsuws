@@ -1,6 +1,10 @@
 package com.nsuws.core.services;
 
+/**
+ * Wrapping Statistics Service Exceptions
+ */
 public class StatisticsServiceException extends  Exception{
+
     public StatisticsServiceException() {
         super();
     }

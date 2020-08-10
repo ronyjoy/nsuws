@@ -1,6 +1,10 @@
 package com.nsuws.core.crypto;
 
+/**
+ * Wrapping any crypto exceptions
+ */
 public class CryptoException extends  Exception{
+
     public CryptoException() {
         super();
     }

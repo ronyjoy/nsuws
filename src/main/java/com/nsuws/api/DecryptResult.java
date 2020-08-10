@@ -2,6 +2,9 @@ package com.nsuws.api;
 
 import com.google.common.base.MoreObjects;
 
+/**
+ * Decrypted value object
+ */
 public class DecryptResult {
 
     private String value;

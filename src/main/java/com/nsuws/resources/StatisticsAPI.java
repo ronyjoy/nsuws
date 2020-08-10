@@ -14,12 +14,12 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
 
 @Path("/nsuws-api/statistics")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class StatisticsAPI {
+
     private String encryptionKey;
     private StatisticsService statisticsService = new StatisticsService();
     private EncryptorAesGcm encryptorAesGcm;
